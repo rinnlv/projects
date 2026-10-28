@@ -1673,37 +1673,7 @@
           </p>
         </div>
 
-        <div class="events-grid">
-          <article class="event-card reveal">
-            <div class="event-date"><span></span>12 октября · 19:00</div>
-            <div>
-              <h3>Книжный клуб: «Дом на тихой улице»</h3>
-              <p>Разговор о памяти, семейных историях и местах, которые продолжают жить внутри нас.</p>
-            </div>
-            <div class="event-info">До 12 участников · 1,5 часа</div>
-            <a class="btn btn-secondary btn-small" href="#contacts" data-event="Книжный клуб: «Дом на тихой улице»">Записаться</a>
-          </article>
-
-          <article class="event-card reveal">
-            <div class="event-date"><span></span>18 октября · 18:30</div>
-            <div>
-              <h3>Встреча с автором: Анна Северина</h3>
-              <p>Вечер о новой прозе, наблюдениях за городом и том, как рождаются тихие истории.</p>
-            </div>
-            <div class="event-info">Свободный вход · 1 час</div>
-            <a class="btn btn-secondary btn-small" href="#contacts" data-event="Встреча с автором: Анна Северина">Записаться</a>
-          </article>
-
-          <article class="event-card reveal">
-            <div class="event-date"><span></span>25 октября · 19:30</div>
-            <div>
-              <h3>Лекция «Как читать современное искусство»</h3>
-              <p>Спокойный разговор о визуальном языке, контексте и удовольствии смотреть внимательнее.</p>
-            </div>
-            <div class="event-info">Билет · 900 ₽ · 1,5 часа</div>
-            <a class="btn btn-secondary btn-small" href="#contacts" data-event="Лекция «Как читать современное искусство»">Записаться</a>
-          </article>
-        </div>
+        <div class="events-grid" id="events-grid"></div>
       </div>
     </section>
 
@@ -2023,19 +1993,134 @@
         element.addEventListener("click", closeModal);
       });
 
+      // Events: always show the three nearest upcoming events.
+      const eventsGrid = document.getElementById("events-grid");
+
+      const EVENTS = [
+        {
+          title: "Книжный клуб: «Дом на тихой улице»",
+          desc: "Разговор о памяти, семейных историях и местах, которые продолжают жить внутри нас.",
+          info: "До 12 участников · 1,5 часа",
+          dayOfMonth: 12,
+          time: "19:00"
+        },
+        {
+          title: "Встреча с автором: Анна Северина",
+          desc: "Вечер о новой прозе, наблюдениях за городом и том, как рождаются тихие истории.",
+          info: "Свободный вход · 1 час",
+          dayOfMonth: 18,
+          time: "18:30"
+        },
+        {
+          title: "Лекция «Как читать современное искусство»",
+          desc: "Спокойный разговор о визуальном языке, контексте и удовольствии смотреть внимательнее.",
+          info: "Билет · 900 ₽ · 1,5 часа",
+          dayOfMonth: 25,
+          time: "19:30"
+        },
+        {
+          title: "Поэтический вечер: «Тёплые окна»",
+          desc: "Читаем вслух стихи Льва Орлова и обсуждаем, как поэзия говорит с нами о доме.",
+          info: "Свободный вход · 1 час",
+          dayOfMonth: 4,
+          time: "19:00"
+        },
+        {
+          title: "Книжный клуб: современная проза",
+          desc: "Открытое обсуждение свежих новинок — каждый приносит книгу, которую хочется порекомендовать.",
+          info: "До 15 участников · 1,5 часа",
+          dayOfMonth: 9,
+          time: "18:30"
+        },
+        {
+          title: "Детский час чтения",
+          desc: "Сказки, игры и рисование для детей 4–8 лет. Можно прийти с родителями.",
+          info: "Вход свободный · 45 минут",
+          dayOfMonth: 16,
+          time: "12:00"
+        },
+        {
+          title: "Лекция «Как издаются книги»",
+          desc: "Путь рукописи от стола автора до книжной полки — просто о сложном.",
+          info: "Билет · 700 ₽ · 1,5 часа",
+          dayOfMonth: 22,
+          time: "19:00"
+        },
+        {
+          title: "Открытый микрофон",
+          desc: "Вечер коротких историй: читаем отрывки, делимся строками и слушаем друг друга.",
+          info: "Свободный вход · 1,5 часа",
+          dayOfMonth: 27,
+          time: "19:30"
+        }
+      ];
+
+      const RU_DATE = new Intl.DateTimeFormat("ru-RU", {
+        day: "numeric",
+        month: "long"
+      });
+
+      // Returns the nearest occurrence of the event that is today or later.
+      const nextEventDate = (event, today) => {
+        let date = new Date(today.getFullYear(), today.getMonth(), event.dayOfMonth);
+        if (date < today) {
+          date = new Date(today.getFullYear(), today.getMonth() + 1, event.dayOfMonth);
+        }
+        return date;
+      };
+
+      const renderEvents = () => {
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+        const upcoming = EVENTS
+          .map(event => ({ event, date: nextEventDate(event, today) }))
+          .sort((a, b) => a.date - b.date)
+          .slice(0, 3);
+
+        eventsGrid.innerHTML = upcoming
+          .map(({ event, date }) => `
+            <article class="event-card reveal">
+              <div class="event-date"><span></span>${RU_DATE.format(date)} · ${event.time}</div>
+              <div>
+                <h3>${event.title}</h3>
+                <p>${event.desc}</p>
+              </div>
+              <div class="event-info">${event.info}</div>
+              <a class="btn btn-secondary btn-small" href="#contacts" data-event="${event.title}">Записаться</a>
+            </article>
+          `)
+          .join("");
+
+        eventsGrid.querySelectorAll(".reveal").forEach(observeReveal);
+      };
+
       // Scroll reveal with reduced-motion support
       const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      let revealObserver = null;
+
+      const observeReveal = element => {
+        if (reduceMotion || !("IntersectionObserver" in window)) {
+          element.classList.add("is-visible");
+        } else if (revealObserver) {
+          revealObserver.observe(element);
+        }
+      };
+
+      // Render the three nearest upcoming events before setting up the observer.
+      renderEvents();
+
       const revealElements = document.querySelectorAll(".reveal");
 
       if (reduceMotion || !("IntersectionObserver" in window)) {
         revealElements.forEach(element => element.classList.add("is-visible"));
       } else {
-        const observer = new IntersectionObserver(
+        revealObserver = new IntersectionObserver(
           entries => {
             entries.forEach(entry => {
               if (entry.isIntersecting) {
                 entry.target.classList.add("is-visible");
-                observer.unobserve(entry.target);
+                revealObserver.unobserve(entry.target);
               }
             });
           },
@@ -2045,8 +2130,11 @@
           }
         );
 
-        revealElements.forEach(element => observer.observe(element));
+        revealElements.forEach(element => revealObserver.observe(element));
       }
+
+      // Refresh the list automatically as time passes (e.g. after midnight).
+      setInterval(renderEvents, 60 * 60 * 1000);
 
       // Keep the mobile menu closed when resizing to desktop.
       window.addEventListener("resize", () => {
