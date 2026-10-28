@@ -734,27 +734,20 @@
       color: var(--cream);
     }
 
-    .cover::before {
-      content: "";
+    .cover-img {
       position: absolute;
-      top: 18px;
-      right: 18px;
-      width: 52px;
-      height: 52px;
-      border: 1px solid currentColor;
-      border-radius: 50%;
-      opacity: .28;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
     .cover::after {
       content: "";
       position: absolute;
-      top: 0;
-      right: 28px;
-      width: 1px;
-      height: 100%;
-      background: currentColor;
-      opacity: .12;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(20, 26, 22, .16) 0%, rgba(20, 26, 22, 0) 38%, rgba(20, 26, 22, .55) 100%);
+      pointer-events: none;
     }
 
     .cover-1 {
@@ -1558,6 +1551,7 @@
         <div class="books-grid">
           <article class="book-card reveal">
             <div class="cover cover-1">
+              <img class="cover-img" src="pic1.jpg" alt="Обложка книги «Когда город засыпает»" loading="lazy">
               <div class="cover-copy">
                 <span class="cover-kicker">Роман</span>
                 <h3>Когда город засыпает</h3>
@@ -1575,6 +1569,7 @@
 
           <article class="book-card reveal">
             <div class="cover cover-2">
+              <img class="cover-img" src="pic2.jpg" alt="Обложка книги «Дом на тихой улице»" loading="lazy">
               <div class="cover-copy">
                 <span class="cover-kicker">Проза</span>
                 <h3>Дом на тихой улице</h3>
@@ -1592,6 +1587,7 @@
 
           <article class="book-card reveal">
             <div class="cover cover-3">
+              <img class="cover-img" src="pic3.jpg" alt="Обложка книги «Свет между строк»" loading="lazy">
               <div class="cover-copy">
                 <span class="cover-kicker">Эссе</span>
                 <h3>Свет между строк</h3>
@@ -1609,6 +1605,7 @@
 
           <article class="book-card reveal">
             <div class="cover cover-4">
+              <img class="cover-img" src="pic4.jpg" alt="Обложка книги «Письма с северного берега»" loading="lazy">
               <div class="cover-copy">
                 <span class="cover-kicker">Роман</span>
                 <h3>Письма с северного берега</h3>
@@ -1626,6 +1623,7 @@
 
           <article class="book-card reveal">
             <div class="cover cover-5">
+              <img class="cover-img" src="pic5.jpg" alt="Обложка книги «Искусство замечать»" loading="lazy">
               <div class="cover-copy">
                 <span class="cover-kicker">Нон-фикшн</span>
                 <h3>Искусство замечать</h3>
@@ -1643,6 +1641,7 @@
 
           <article class="book-card reveal">
             <div class="cover cover-6">
+              <img class="cover-img" src="pic6.jpg" alt="Обложка книги «Тёплые окна»" loading="lazy">
               <div class="cover-copy">
                 <span class="cover-kicker">Поэзия</span>
                 <h3>Тёплые окна</h3>
@@ -1823,6 +1822,7 @@
         <span aria-hidden="true">✕</span>
       </button>
       <div class="cover modal-cover cover-1" id="modal-cover">
+        <img class="cover-img" id="modal-img" src="pic1.jpg" alt="Обложка книги «Когда город засыпает»">
         <div class="cover-copy">
           <span class="cover-kicker" id="modal-kicker">Роман</span>
           <h3 id="modal-title">Когда город засыпает</h3>
@@ -1904,11 +1904,13 @@
       const modalGenre = document.getElementById("modal-genre");
       const modalDesc = document.getElementById("modal-desc");
       const modalPrice = document.getElementById("modal-price");
+      const modalImg = document.getElementById("modal-img");
       let lastFocused = null;
 
       const BOOKS = {
         "Когда город засыпает": {
           cover: "cover-1",
+          img: "pic1.jpg",
           kicker: "Роман",
           author: "Анна Северина",
           genre: "Современная проза",
@@ -1917,6 +1919,7 @@
         },
         "Дом на тихой улице": {
           cover: "cover-2",
+          img: "pic2.jpg",
           kicker: "Проза",
           author: "Марк Ветров",
           genre: "Семейная сага",
@@ -1925,6 +1928,7 @@
         },
         "Свет между строк": {
           cover: "cover-3",
+          img: "pic3.jpg",
           kicker: "Эссе",
           author: "Ирина Лескова",
           genre: "Литературные эссе",
@@ -1933,6 +1937,7 @@
         },
         "Письма с северного берега": {
           cover: "cover-4",
+          img: "pic4.jpg",
           kicker: "Роман",
           author: "Егор Миронов",
           genre: "Путешествия и любовь",
@@ -1941,6 +1946,7 @@
         },
         "Искусство замечать": {
           cover: "cover-5",
+          img: "pic5.jpg",
           kicker: "Нон-фикшн",
           author: "Вера Полянская",
           genre: "Культура и наблюдение",
@@ -1949,6 +1955,7 @@
         },
         "Тёплые окна": {
           cover: "cover-6",
+          img: "pic6.jpg",
           kicker: "Поэзия",
           author: "Лев Орлов",
           genre: "Современная поэзия",
@@ -1963,6 +1970,8 @@
 
         lastFocused = document.activeElement;
         modalCover.className = `cover modal-cover ${book.cover}`;
+        modalImg.src = book.img;
+        modalImg.alt = `Обложка книги «${title}»`;
         modalKicker.textContent = book.kicker;
         modalTitle.textContent = title;
         modalAuthor.textContent = book.author;
